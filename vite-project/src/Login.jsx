@@ -3,40 +3,46 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import { useEffect} from 'react';
+import Dashboard from './Dashboard';
+import GetLost from './GetLost';
 
 function Login() {
 
-   const [login, setLogin] = useState([]);
    const [email,setEmail] = useState('');
    const [password,setPassword] = useState('');
+   const [success, setSuccess] = useState(false);
+   const[lost,setLost]=useState(false)
 
-
-
-
-const fetchLogin = async () => {
-const res = await fetch('http://localhost:3000');
-const data = await res.json();
-setLogin(data);
-};
-
-
-useEffect(() => {
-fetchLogin();
-}, []);
 
 
 const addLogin = async () => {
-await fetch('http://localhost:3000', {
+
+let res = await fetch('http://localhost:3000/login', {
 method: 'POST',
 headers: {
 'Content-Type': 'application/json'
 },
 body: JSON.stringify({email,password })
 });
-setEmail('');
-setPassword('');
-fetchLogin();
+
+
+let data = await res.json()
+if (data.message) {
+    setSuccess(true)
+    }
+    else{
+        setLost(true)
+    }
 };
+
+
+if(success){
+   return <Dashboard /> 
+}
+
+if(lost){
+    return <GetLost/>
+}
 
 
   return(
@@ -48,12 +54,12 @@ fetchLogin();
        
 <section>
     <label>Email:</label>
-    <input type='email' placeholder='Enter  your email'/>
+    <input type='email' placeholder='Enter  your email' onChange={(e)=>setEmail(e.target.value)}/>
 </section>
 
 <section>
     <label>Password:</label>
-    <input type='password' placeholder='Enter  your Password'/>
+    <input type='password' placeholder='Enter  your Password' onChange={(e)=>setPassword(e.target.value)}/>
 </section>
 
 <br></br>
